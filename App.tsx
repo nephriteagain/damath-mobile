@@ -1,12 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
+import Board from './components/Board';
+import GlobalProvider from './GlobalContext';
+
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <GlobalProvider>
+      <View style={styles.container}>
+        <Board />
+        <StatusBar style="auto" />
+      </View>
+    </GlobalProvider>
   );
 }
 
