@@ -5,6 +5,7 @@ import { COUNTING, operation } from "../lib/data"
 import Operation from "./Operation";
 import Piece from "./Piece";
 import { useGlobalContext } from "../GlobalContext";
+import { ActionKind } from "../gameReducer";
 
 
 
@@ -13,7 +14,7 @@ const boxWidth = screenWidth/8
 
 
 export default function Board() {
-    const { boardData } = useGlobalContext()
+    const { boardData, dispatch } = useGlobalContext()
 
     return (
         <View style={styles.board}>            
@@ -24,13 +25,20 @@ export default function Board() {
                 const boxColorStyle = hightlighted  ? styles.boxHighlighted :
                     playable ? styles.boxPlayable : styles.boxUnplayable
 
-                const onPress = hightlighted ? () => Alert.alert(`you pressed box ${b.x}:${b.y}`) : undefined
+                const movePiece = hightlighted ?
+                    () => dispatch({
+                        type: ActionKind.MOVE_PIECE, 
+                        payload: {
+                            to: {x,y}
+                        }
+                    }) : 
+                  undefined
 
                 return (
                     <Pressable
                     key={`x:${x};y:${y}`}
                     style={[styles.box, boxColorStyle]}
-                    onPress={onPress}
+                    onPress={movePiece}
                     >
                         <Operation 
                         name={operation} 

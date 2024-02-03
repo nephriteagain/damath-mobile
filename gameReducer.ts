@@ -14,7 +14,6 @@ export enum ActionKind {
 type MoveAction = {
     type: ActionKind.MOVE_PIECE,
     payload: {
-        from: coordinates,
         to: coordinates   
     }
 }
@@ -62,10 +61,18 @@ export function boardReducer(state: GameTypes, action: Action) : GameTypes {
     }
 
     if (action.type === ActionKind.MOVE_PIECE) {
-        const { from, to } = action.payload
         if (!state.pieceToMove) {
             throw new Error('no piece to move')
-        }        
+        }  
+        const { to } = action.payload
+        const pieceCurrentBlock = state.boardData.find(b => b.piece === state.pieceToMove)
+        if (!pieceCurrentBlock) {
+            throw new Error('cannot find piece to move')
+        }
+        const from = {
+            x: pieceCurrentBlock.x, 
+            y: pieceCurrentBlock.y
+        }
         // remove the highligts across the board
         const boardWithoutHighlights = resetHighlightMoves(state.boardData)
         // move the selected piece to its new location

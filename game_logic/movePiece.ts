@@ -19,7 +19,7 @@ export function movePiece(
             }
         }
         // add the piece to its new place
-        if (b.x === from.x &&  b.y === from.y) {
+        if (b.x === to.x &&  b.y === to.y) {
             return {
                 ...b,
                 piece

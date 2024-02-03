@@ -46,9 +46,10 @@ export default function Operation({ name, hasPiece}: OperationProps) {
 }
 
 const styles = StyleSheet.create({
+
     hasPiece: {
         position: 'absolute',
         top: 1,
-        left: 1
+        left: 1,                
     }
 })

@@ -22,14 +22,22 @@ export default function Piece({type, value, isKing, moves, label, x, y}:PiecePro
         }) :
         undefined
 
+    const movableStateStyle = 
+        moves.length > 0 ? 
+        styles.pieceMovable : 
+        styles.pieceImmovable
+    const pieceColorStyle =
+        type === 'z' ?
+        styles.redPiece :
+        styles.bluePiece
+
     return (
         <Pressable 
             onPressIn={showMoves}
             style={[
-                styles.piece, 
-                type === 'z' ? 
-                    styles.redPiece : 
-                    styles.bluePiece
+                styles.piece,
+                pieceColorStyle,
+                movableStateStyle
             ]}
             >
                 <Text style={styles.pieceValue}>
@@ -53,10 +61,16 @@ const styles = StyleSheet.create({
     },
     redPiece: {
         backgroundColor: 'red'
-    },
+    },    
     pieceValue: {
         fontSize: 24,
         fontWeight: '600',
         color: 'white'
+    },
+    pieceMovable: {
+        opacity: 1
+    },
+    pieceImmovable: {
+        opacity: 0.6
     }
 })
