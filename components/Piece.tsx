@@ -71,6 +71,6 @@ const styles = StyleSheet.create({
         opacity: 1
     },
     pieceImmovable: {
-        opacity: 0.6
+        opacity: 0.7
     }
 })
