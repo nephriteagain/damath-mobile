@@ -32,11 +32,13 @@ export type Action = MoveAction|HighlightAction
 export const gameInitialState : {
     boardData: BoardI;
     pieceToMove: PieceI|null;
-    playerTurn: 'x'|'z'
+    playerTurn: 'x'|'z';
+    hasCapturedPiece: boolean;
 } = {
     boardData: new Board(generateCountingBoard()),
     pieceToMove: null,
-    playerTurn: 'z'
+    playerTurn: 'z',
+    hasCapturedPiece: false
 }
 
 export type GameTypes = typeof gameInitialState
@@ -74,11 +76,12 @@ export function boardReducer(state: GameTypes, action: Action) : GameTypes {
         }
 
         const newBoard = state.boardData.movePiece(state.pieceToMove, from, to)
+        
         return {
             ...state,
             pieceToMove: null,
             boardData: newBoard,
-            playerTurn: state.playerTurn === 'z' ? 'x' : 'z'
+            playerTurn: state.playerTurn === 'z' ? 'x' : 'z',
         }
         
     }
