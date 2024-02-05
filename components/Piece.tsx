@@ -1,10 +1,10 @@
-import { piece } from "../lib/data";
 import { StyleSheet, Pressable, Text, Dimensions, Alert } from "react-native";
 
 import { useGlobalContext } from "../GlobalContext";
 import { ActionKind } from "../gameReducer";
+import { PieceI } from "../game_logic/graph/testImplementation";
 
-type PieceProps = piece & {
+type PieceProps = PieceI & {
     x: number;
     y: number;
 }
@@ -12,14 +12,16 @@ type PieceProps = piece & {
 const screenWidth = Dimensions.get('screen').width
 const boxWidth = screenWidth/8
 
-export default function Piece({type, value, isKing, moves, label, x, y}:PieceProps) {
+export default function Piece({type, value, isKing, moves,  x, y}:PieceProps) {
     const { dispatch, playerTurn } = useGlobalContext()
 
-    const showMoves = playerTurn === type ? 
-        () => dispatch({
-            type: ActionKind.HIGHLIGHT_MOVES,
-            payload: {x,y}
-        }) :
+    const showMoves = (playerTurn === type && moves.length > 0) ? 
+        () => {
+            dispatch({
+                type: ActionKind.HIGHLIGHT_MOVES,
+                payload: {x,y}
+            })
+        } :
         undefined
 
     const movableStateStyle = 
@@ -33,7 +35,9 @@ export default function Piece({type, value, isKing, moves, label, x, y}:PiecePro
 
     return (
         <Pressable 
-            onPressIn={showMoves}
+            onPressIn={() => {
+                typeof showMoves === 'function' && showMoves()
+            }}
             style={[
                 styles.piece,
                 pieceColorStyle,
@@ -43,7 +47,7 @@ export default function Piece({type, value, isKing, moves, label, x, y}:PiecePro
                 <Text style={styles.pieceValue}>
                 {value}
                 </Text>
-            </Pressable>
+        </Pressable>
     )
 }
 

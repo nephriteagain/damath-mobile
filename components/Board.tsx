@@ -6,6 +6,7 @@ import Operation from "./Operation";
 import Piece from "./Piece";
 import { useGlobalContext } from "../GlobalContext";
 import { ActionKind } from "../gameReducer";
+import { generateBoardCoordinate } from "../lib/utils";
 
 
 
@@ -15,40 +16,63 @@ const boxWidth = screenWidth/8
 
 export default function Board() {
     const { boardData, dispatch } = useGlobalContext()
+    const squareBoard = generateBoardCoordinate()
+    const gameBoard = squareBoard.map(b => {        
+        return boardData.board.find(block => b.x === block.coordinates.x && b.y === block.coordinates.y)
+    })
+    
 
     return (
         <View style={styles.board}>            
 
-            {boardData.map((b,i) => {
-                const {x,y,playable, operation, piece, hightlighted} = b
+            {gameBoard.map((b,i) => {
+                
+                const key = b ? `x:${b.coordinates.x};y:${b.coordinates.y}` : i
 
-                const boxColorStyle = hightlighted  ? styles.boxHighlighted :
-                    playable ? styles.boxPlayable : styles.boxUnplayable
+                
 
-                const movePiece = hightlighted ?
+                
+
+
+                if (!b) {
+                    return (
+                        <View 
+                        key={key}
+                        style={[
+                            styles.box, styles.boxUnplayable
+                        ]}
+                        >
+
+                        </View>
+                    )
+                }
+
+                const boxColorStyle = b?.highlighted  ? styles.boxHighlighted : styles.boxPlayable
+
+                const movePiece = b.highlighted ?
                     () => dispatch({
                         type: ActionKind.MOVE_PIECE, 
                         payload: {
-                            to: {x,y}
+                            to: b.coordinates
                         }
                     }) : 
                   undefined
 
                 return (
                     <Pressable
-                    key={`x:${x};y:${y}`}
+                    key={key}
                     style={[styles.box, boxColorStyle]}
                     onPress={movePiece}
                     >
                         <Operation 
-                        name={operation} 
-                        hasPiece={Boolean(piece)}
+                        name={b.operation} 
+                        hasPiece={Boolean(b.piece)}
                         />
-                        { piece && 
+                        { b.piece && 
                         <Piece 
-                        {...piece} 
-                        x={x} 
-                        y={y} 
+                        {...b.piece} 
+                        x={b.coordinates.x} 
+                        y={b.coordinates.y} 
                         />
                         }
                     </Pressable>

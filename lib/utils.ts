@@ -73,3 +73,20 @@ export function blockJumpable(
 export function makeC(x:number,y:number) : {x:number,y:number} {
     return {x,y}
 }
+
+export function generateBoardCoordinate() :  Array<{x:number;y:number}> {
+    let x = 0;
+    let y = 7;
+    const coordinateArr : Array<{x:number;y:number}> = []
+
+    while  (y >= 0) {
+        while (x <= 7) {
+            coordinateArr.push({x,y})
+            ++x
+        }
+        x = 0
+        --y
+    }
+
+    return coordinateArr
+}

@@ -96,7 +96,7 @@ function getPieceWithNewJumps(
  */
 export function getBoardWithUpdatedMoves(board: Array<boxPiece>) : Array<boxPiece> {
     // checks all available jumps for blue
-    const boardData = structuredClone(board)
+    const boardData = board.map(b => b)
 
     const boardWithOnlyBlueJumps = boardData.map(b => {
         // skips all empty blocks or non blue piece
