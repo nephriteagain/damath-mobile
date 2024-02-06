@@ -38,11 +38,13 @@ export interface BlockI {
 
 export interface BoardI {
     board: Array<BlockI>;
+    isGameOver: boolean;
     movePiece(
         piece: PieceI, 
         from: coordinates, 
         to: coordinates
     ) : BoardI
     highLightMoves(moves: Array<coordinates>) : BoardI;    
+    restartGame(board: Array<BlockI>) : BoardI;
 }   
 

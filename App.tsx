@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Board from './components/Board';
 import GlobalProvider from './GlobalContext';
 import PlayerTurn from './components/PlayerTurn';
+import GameOverModal from './components/GameOverModal';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Board />
         <StatusBar style="auto" />
       </View>
+      <GameOverModal />
     </GlobalProvider>
   );
 }

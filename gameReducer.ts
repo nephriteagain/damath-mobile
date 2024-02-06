@@ -8,6 +8,7 @@ export const initialBoardData = COUNTING;
 export enum ActionKind {
     MOVE_PIECE,
     HIGHLIGHT_MOVES,
+    RESTART_GAME
 }
 
 type MoveAction = {
@@ -19,23 +20,24 @@ type MoveAction = {
 
 type HighlightAction = {
     type: ActionKind.HIGHLIGHT_MOVES,
-    payload: coordinates
-    
+    payload: coordinates    
+}
+
+type RestartGame = {
+    type: ActionKind.RESTART_GAME,
 }
 
 
-export type Action = MoveAction|HighlightAction
+export type Action = MoveAction|HighlightAction|RestartGame
 
 export const gameInitialState : {
     boardData: BoardI;
     pieceToMove: PieceI|null;
     playerTurn: 'x'|'z';
-    hasCapturedPiece: boolean;
 } = {
     boardData: new Board(generateCountingBoard()),
     pieceToMove: null,
     playerTurn: 'z',
-    hasCapturedPiece: false
 }
 
 export type GameTypes = typeof gameInitialState
@@ -81,6 +83,16 @@ export function boardReducer(state: GameTypes, action: Action) : GameTypes {
             playerTurn: state.playerTurn === 'z' ? 'x' : 'z',
         }
         
+    }
+
+    if(action.type === ActionKind.RESTART_GAME) {
+        const newBoard = state.boardData.restartGame(generateCountingBoard())
+
+        return {
+            ...state,
+            boardData: newBoard,
+            pieceToMove: null,
+        }
     }
 
     return state;

@@ -62,10 +62,12 @@ export class Piece implements PieceI {
 
 
 export class Board implements BoardI {
-    public board
+    public board;
+    public isGameOver: boolean;        
 
     constructor(board: Array<BlockI>) {
         this.board = board;
+        this.isGameOver = false;
     }
 
     /**
@@ -163,7 +165,6 @@ export class Board implements BoardI {
         const oppositePieceBlock = this.searchOppositePiece(block, piece, direction)
         
         if (oppositePieceBlock) {
-            console.log(oppositePieceBlock.piece!.value)
             const nextBlock = 
             direction === Direction.TOP_RIGHT ? oppositePieceBlock.topRight :
             direction === Direction.TOP_LEFT ? oppositePieceBlock.topLeft :
@@ -355,6 +356,35 @@ export class Board implements BoardI {
         
     }
 
+    private gameOverChecker() {
+        let xPlayerHasMoves = false;
+        for (let i = 0; i < this.board.length; i++) {
+            const b = this.board[i];
+            if (b.piece && b.piece.type === 'x' && b.piece.moves.length > 0) {
+                xPlayerHasMoves = true;
+                break;
+            }
+        }
+        let zPlayerHasMoves = false;
+        for (let i = 0; i < this.board.length; i++) {
+            const b = this.board[i];
+            if (b.piece && b.piece.type === 'z' && b.piece.moves.length > 0) {
+                zPlayerHasMoves = true;
+                break;
+            }
+        }
+        if (!xPlayerHasMoves || !zPlayerHasMoves) {
+            this.isGameOver = true
+        }
+    }
+
+    restartGame(board: Array<BlockI>) : BoardI {
+        this.board = board;
+        this.isGameOver = false;
+
+        return cloneDeep(this)
+    }
+
     movePiece(piece: PieceI, from: coordinates, to: coordinates): BoardI {
         const currentBlock = this.board.find(b => b.coordinates.x === from.x && b.coordinates.y === from.y)
         if (!currentBlock) {
@@ -372,31 +402,14 @@ export class Board implements BoardI {
             }
         }
         this.removedCapturedPiece(to, from)
-        // if (!piece.isKing) {
-        //     // this removes any capture piece for regular piece only
-        //     // this determines the direction of the jump and only works when a piece is captured
-        //     const topRightJump = to.x - from.x === 2 && to.y - from.y === 2
-        //     const topLeftJump = to.x - from.x === -2 && to.y - from.y === 2
-        //     const botRightJump = to.x - from.x === 2 && to.y - from.y === -2
-        //     const botLeftJump = to.x - from.x === -2 && to.y - from.y === -2
-        //     if (topRightJump) {
-        //         currentBlock.topRight!.piece = undefined;
-        //     }
-        //     if (topLeftJump) {
-        //         currentBlock.topLeft!.piece = undefined;
-        //     }
-        //     if (botRightJump) {
-        //         currentBlock.botRight!.piece = undefined;
-        //     }
-        //     if (botLeftJump) {
-        //         currentBlock.botLeft!.piece = undefined;
-        //     }
-        // }
-        // checks if the piece can be promoted
+        
+        // promote the piece if it landed on the other side
         this.promotePiece(piece, to.y)
         
         // update each pieces moves
         this.updateBoardWithNewMoves()
+
+        this.gameOverChecker()
 
         return cloneDeep(this)
     }
