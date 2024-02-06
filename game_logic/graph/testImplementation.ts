@@ -1,26 +1,9 @@
-import { operation } from "../../lib/data";
-import { coordinates, Direction } from "../../types";
+import { coordinates, Direction, operation, PieceI, BlockI, BoardI } from "../../types";
 import { cloneDeep } from "lodash";
 
 
-export interface PieceI {
-    type: 'x'|'z';
-    value: number;
-    isKing: boolean;
-    moves: Array<coordinates>;
-}
 
-export interface BlockI {
-    coordinates: {x:number;y:number};
-    operation: operation;
-    highlighted: boolean;
-    piece?: PieceI;
-    topLeft?: BlockI;
-    topRight?: BlockI;
-    botLeft?: BlockI;
-    botRight?: BlockI    
-}
-    
+
 type BlockContructorArgs = {
     coordinates: {x:number;y:number};
     operation: operation;
@@ -75,16 +58,7 @@ export class Piece implements PieceI {
     }
 }
 
-export interface BoardI {
-    board: Array<BlockI>;
-    movePiece(
-        piece: PieceI, 
-        from: coordinates, 
-        to: coordinates
-    ) : BoardI
-    highLightMoves(moves: Array<coordinates>) : BoardI;    
 
-}   
 
 export class Board implements BoardI {
     public board

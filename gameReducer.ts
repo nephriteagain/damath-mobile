@@ -1,9 +1,6 @@
-import { COUNTING, boxPiece, piece } from "./lib/data";
-import { highlightMoves, resetHighlightMoves } from "./game_logic/highlightMoves";
-import { movePiece } from "./game_logic/movePiece";
-import { getBoardWithUpdatedMoves } from "./game_logic/newMoves";
-import { coordinates } from "./types";
-import { Board,  BoardI, PieceI } from "./game_logic/graph/testImplementation";
+import { COUNTING } from "./lib/data";
+import { coordinates, BoardI, PieceI } from "./types";
+import { Board, } from "./game_logic/graph/testImplementation";
 import { generateCountingBoard } from "./game_logic/graph/COUNTING";
 
 export const initialBoardData = COUNTING;

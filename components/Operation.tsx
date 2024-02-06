@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import { operation } from '../lib/data';
+import { operation } from '../types';
 
 type OperationProps = {
     name: operation|undefined;

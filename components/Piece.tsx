@@ -2,7 +2,7 @@ import { StyleSheet, Pressable, Text, Dimensions, Alert } from "react-native";
 
 import { useGlobalContext } from "../GlobalContext";
 import { ActionKind } from "../gameReducer";
-import { PieceI } from "../game_logic/graph/testImplementation";
+import { PieceI } from "../types";
 
 type PieceProps = PieceI & {
     x: number;

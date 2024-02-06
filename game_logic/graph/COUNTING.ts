@@ -1,6 +1,6 @@
-import { operation } from '../../lib/data'
-import { Piece, BlockI, Block } from './testImplementation'
+import { Piece, Block } from './testImplementation'
 import { makeC } from '../../lib/utils'
+import { operation, BlockI } from '../../types'
 
 
 export function generateCountingBoard() : Array<BlockI> {

@@ -1,5 +1,4 @@
-import { Pressable, View, StyleSheet, Text, Dimensions, Alert } from "react-native"
-import { COUNTING, operation } from "../lib/data"
+import {  View, StyleSheet,  Dimensions } from "react-native"
 
 
 import Operation from "./Operation";

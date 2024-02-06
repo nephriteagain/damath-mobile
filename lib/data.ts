@@ -1,9 +1,4 @@
-export enum operation  {
-    ADD = 'ADD',
-    MULTIPLY = 'MULTIPLY',
-    SUBTRACT = 'SUBTRACT',
-    DIVIDE = 'DIVIDE'
-}
+import { operation } from "../types";
 
 export type boxPiece = {
     x: number;
