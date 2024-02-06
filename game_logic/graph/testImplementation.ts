@@ -1,6 +1,7 @@
 import { operation } from "../../lib/data";
-import { coordinates } from "../../types";
+import { coordinates, Direction } from "../../types";
 import { cloneDeep } from "lodash";
+
 
 export interface PieceI {
     type: 'x'|'z';
@@ -92,7 +93,9 @@ export class Board implements BoardI {
         this.board = board;
     }
 
-    
+    /**
+     * @description sets all highlighted blocks to false
+     */
     private clearAllHighlights() {        
         for (let i = 0; i < this.board.length; i++) {
             this.board[i].highlighted = false;
@@ -110,6 +113,33 @@ export class Board implements BoardI {
     }
 
     /**
+     * 
+     * @param block the block the check if empty
+     * @param moves array to store new moves
+     * @param direction direction of the move
+     * @description recursively checks blocks if empty and add it into the moves array
+     */
+    private isBlockEmptyRecursive(block: BlockI|undefined, moves: Array<coordinates>, direction : Direction) {
+        if (!block) {
+            return moves;
+        }
+        if (block.piece) {
+            return moves
+        }
+
+        moves.push(block.coordinates)
+        const nexBlock = 
+            direction === Direction.TOP_LEFT ? block.topLeft :
+            direction === Direction.TOP_RIGHT ? block.topRight :
+            direction === Direction.BOT_LEFT ? block.botLeft :
+            direction === Direction.BOT_RIGHT ? block.botRight : 
+            undefined
+
+        this.isBlockEmptyRecursive(nexBlock, moves, direction)
+        return moves
+    }
+
+    /**
      * @description checks if a block exist, have piece, and what type
      */
     private isBlockWithOppositePiece(block: BlockI|undefined, pieceType: 'x'|'z') : boolean {
@@ -117,6 +147,51 @@ export class Board implements BoardI {
             return false;
         }
         return Boolean(block.piece && block.piece.type !== pieceType)
+    }
+    
+
+    /**
+     * 
+     * @param block the current block where the piece is located
+     * @param moves the array where new moves will be stored
+     * @description add all possble moves of a king piece
+     */
+    private updatedKingMoves(block: BlockI|undefined, moves: Array<coordinates>) : Array<coordinates> {       
+        this.isBlockEmptyRecursive(block?.topLeft, moves, Direction.TOP_LEFT)
+        this.isBlockEmptyRecursive(block?.topRight, moves, Direction.TOP_RIGHT)
+        this.isBlockEmptyRecursive(block?.botLeft, moves, Direction.BOT_LEFT)
+        this.isBlockEmptyRecursive(block?.botRight, moves, Direction.BOT_RIGHT)
+
+        return moves
+    }
+
+    private searchKingJump(block: BlockI|undefined, piece: PieceI, moves: Array<coordinates>, direction: Direction) : Array<coordinates> {
+        if (!block) {
+            return moves;
+        }
+        if (this.isBlockWithOppositePiece(block, piece.type)) {
+            const nextBlock = 
+                direction === Direction.TOP_RIGHT ?
+                block.topRight :
+                direction === Direction.TOP_LEFT ?
+                block.topLeft :
+                direction === Direction.BOT_RIGHT ?
+                block.botRight :
+                direction === Direction.BOT_LEFT ?
+                block.botLeft :
+                undefined
+            this.isBlockEmptyRecursive(nextBlock, moves, direction)
+        }
+        return moves
+    }
+
+    private updateKingJumps(block: BlockI|undefined, piece: PieceI, moves: Array<coordinates>) : Array<coordinates> {
+        this.searchKingJump(block?.topLeft, piece, moves, Direction.TOP_LEFT)
+        this.searchKingJump(block?.topRight, piece, moves, Direction.TOP_RIGHT)
+        this.searchKingJump(block?.botLeft, piece, moves, Direction.BOT_LEFT)
+        this.searchKingJump(block?.botRight, piece, moves, Direction.BOT_RIGHT)
+
+        return moves
     }
     
     private updatePieceWithNewJumps(piece: PieceI) : Array<coordinates> {
@@ -154,6 +229,9 @@ export class Board implements BoardI {
             }
 
         }
+        if (isKing) {
+            this.updateKingJumps(pieceBlock, piece, newMoves)
+        }
         return newMoves
     }
 
@@ -164,10 +242,7 @@ export class Board implements BoardI {
             throw new Error('piece not found')
         }
         const { type , isKing } = piece
-        if (!isKing) {       
-            
-            
-
+        if (!isKing) {                           
             if (type === 'x' && pieceBlock.botLeft && this.isBlockEmpty(pieceBlock.botLeft)) {
                 newMoves.push(pieceBlock.botLeft.coordinates)
             }
@@ -181,6 +256,10 @@ export class Board implements BoardI {
                 newMoves.push(pieceBlock.topRight.coordinates)
             }
         }
+        if (isKing) {
+            this.updatedKingMoves(pieceBlock, newMoves)
+        }
+
         
         return newMoves
     }
@@ -229,6 +308,16 @@ export class Board implements BoardI {
         }
     }
 
+    private promotePiece(piece: Piece, y: number) {
+        if (piece.isKing) return;
+        if (piece.type === 'z' && y === 7) {
+            piece.isKing = true;
+        }
+        if (piece.type === 'x' && y === 0) {
+            piece.isKing = true;
+        }
+    }
+
     movePiece(piece: PieceI, from: coordinates, to: coordinates): BoardI {
         const currentBlock = this.board.find(b => b.coordinates.x === from.x && b.coordinates.y === from.y)
         if (!currentBlock) {
@@ -265,6 +354,9 @@ export class Board implements BoardI {
                 currentBlock.botLeft!.piece = undefined;
             }
         }
+        // checks if the piece can be promoted
+        this.promotePiece(piece, to.y)
+        
         // update each pieces moves
         this.updateBoardWithNewMoves()
 

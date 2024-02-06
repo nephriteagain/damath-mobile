@@ -32,7 +32,10 @@ export default function Piece({type, value, isKing, moves,  x, y}:PieceProps) {
         type === 'z' ?
         styles.redPiece :
         styles.bluePiece
-
+    const pieceKingStyle = 
+        isKing ?
+        styles.pieceKing :
+        {}
     return (
         <Pressable 
             onPressIn={() => {
@@ -41,7 +44,8 @@ export default function Piece({type, value, isKing, moves,  x, y}:PieceProps) {
             style={[
                 styles.piece,
                 pieceColorStyle,
-                movableStateStyle
+                movableStateStyle,
+                pieceKingStyle
             ]}
             >
                 <Text style={styles.pieceValue}>
@@ -76,5 +80,10 @@ const styles = StyleSheet.create({
     },
     pieceImmovable: {
         opacity: 0.7
+    },
+    pieceKing: {
+        borderColor: 'black',
+        borderWidth: 3,
+        borderStyle: 'dotted'
     }
 })

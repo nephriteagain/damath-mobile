@@ -42,7 +42,6 @@ export default function Board() {
                             styles.box, styles.boxUnplayable
                         ]}
                         >
-
                         </View>
                     )
                 }
@@ -124,5 +123,6 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: '600',
         color: 'white'
-    }
+    },
+
 })
