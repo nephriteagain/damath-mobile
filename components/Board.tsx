@@ -23,7 +23,6 @@ export default function Board() {
     const gameBoard = squareBoard.map(b => {        
         return boardData.board.find(block => b.x === block.coordinates.x && b.y === block.coordinates.y)
     })
-    
 
     return (
         <View style={styles.board}>            

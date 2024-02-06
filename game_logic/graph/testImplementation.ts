@@ -1,5 +1,6 @@
 import { coordinates, Direction, operation, PieceI, BlockI, BoardI } from "../../types";
 import { cloneDeep } from "lodash";
+import { CAPTURE_GROUPS } from '../../lib/CAPTURE_GROUPS'
 
 
 
@@ -139,23 +140,40 @@ export class Board implements BoardI {
         return moves
     }
 
+    private searchOppositePiece(block: BlockI|undefined, piece: PieceI, direction: Direction) : BlockI|undefined {
+        if (!block) {
+            return undefined
+        }
+        if (this.isBlockWithOppositePiece(block, piece.type)) {{
+            return block
+        }}
+        const nextBlock = 
+            direction === Direction.TOP_RIGHT ? block.topRight :
+            direction === Direction.TOP_LEFT ? block.topLeft :
+            direction === Direction.BOT_RIGHT ? block.botRight :
+            direction === Direction.BOT_LEFT ? block.botLeft :
+            undefined
+        return this.searchOppositePiece(nextBlock, piece, direction)
+    }
+
     private searchKingJump(block: BlockI|undefined, piece: PieceI, moves: Array<coordinates>, direction: Direction) : Array<coordinates> {
         if (!block) {
             return moves;
         }
-        if (this.isBlockWithOppositePiece(block, piece.type)) {
+        const oppositePieceBlock = this.searchOppositePiece(block, piece, direction)
+        
+        if (oppositePieceBlock) {
+            console.log(oppositePieceBlock.piece!.value)
             const nextBlock = 
-                direction === Direction.TOP_RIGHT ?
-                block.topRight :
-                direction === Direction.TOP_LEFT ?
-                block.topLeft :
-                direction === Direction.BOT_RIGHT ?
-                block.botRight :
-                direction === Direction.BOT_LEFT ?
-                block.botLeft :
-                undefined
+            direction === Direction.TOP_RIGHT ? oppositePieceBlock.topRight :
+            direction === Direction.TOP_LEFT ? oppositePieceBlock.topLeft :
+            direction === Direction.BOT_RIGHT ? oppositePieceBlock.botRight :
+            direction === Direction.BOT_LEFT ? oppositePieceBlock.botLeft :
+            undefined
+
             this.isBlockEmptyRecursive(nextBlock, moves, direction)
         }
+
         return moves
     }
 
@@ -292,6 +310,51 @@ export class Board implements BoardI {
         }
     }
 
+    private removedCapturedPiece(to: coordinates, from: coordinates) {
+        // get the captured group
+        const capturedArea = CAPTURE_GROUPS.find(group => {
+            const hasTo = group.some(c => c.x === to.x && c.y === to.y)
+            const hasFrom = group.some(c => c.x === from.x && c.y === from.y)
+            return hasTo && hasFrom
+        })
+        if (!capturedArea) {
+            throw new Error('capture group not found')
+        }
+        // get the block where to and from exist
+        const toBlock = this.board.find(b => b.coordinates.x === to.x && b.coordinates.y === to.y)
+        const fromBlock = this.board.find(b => b.coordinates.x === from.x && b.coordinates.y === from.y)
+        if (!toBlock) {
+            throw new Error('"to" block not found')
+        }
+        if (!fromBlock) {
+            throw new Error('"from" block not found')
+        }
+        // get the indices of those blocks
+        const toIndex = this.board.indexOf(toBlock)
+        const fromIndex = this.board.indexOf(fromBlock)
+        
+        // loop in remove the capture piece
+        for (let i = 0; i < this.board.length; i++) {
+            const b = this.board[i]
+            // check if the block is part of the capture group
+            const  isPartOfCaptureGroup =  capturedArea.some(c => c.x === b.coordinates.x && c.y === b.coordinates.y)
+            if (isPartOfCaptureGroup && b.piece) {
+                
+
+                const  blockIndex = this.board.indexOf(b)
+                // this means to block is in the middle of the from and to blocks
+                if (
+                    blockIndex > toIndex && blockIndex < fromIndex ||
+                    blockIndex < toIndex && blockIndex > fromIndex
+                ) {
+                    // remove  the captured piece
+                    this.board[i].piece =  undefined;
+                }
+            }
+        }
+        
+    }
+
     movePiece(piece: PieceI, from: coordinates, to: coordinates): BoardI {
         const currentBlock = this.board.find(b => b.coordinates.x === from.x && b.coordinates.y === from.y)
         if (!currentBlock) {
@@ -308,26 +371,27 @@ export class Board implements BoardI {
                 b.piece = piece
             }
         }
-        if (!piece.isKing) {
-            // this removes any capture piece for regular piece only
-            // this determines the direction of the jump and only works when a piece is captured
-            const topRightJump = to.x - from.x === 2 && to.y - from.y === 2
-            const topLeftJump = to.x - from.x === -2 && to.y - from.y === 2
-            const botRightJump = to.x - from.x === 2 && to.y - from.y === -2
-            const botLeftJump = to.x - from.x === -2 && to.y - from.y === -2
-            if (topRightJump) {
-                currentBlock.topRight!.piece = undefined;
-            }
-            if (topLeftJump) {
-                currentBlock.topLeft!.piece = undefined;
-            }
-            if (botRightJump) {
-                currentBlock.botRight!.piece = undefined;
-            }
-            if (botLeftJump) {
-                currentBlock.botLeft!.piece = undefined;
-            }
-        }
+        this.removedCapturedPiece(to, from)
+        // if (!piece.isKing) {
+        //     // this removes any capture piece for regular piece only
+        //     // this determines the direction of the jump and only works when a piece is captured
+        //     const topRightJump = to.x - from.x === 2 && to.y - from.y === 2
+        //     const topLeftJump = to.x - from.x === -2 && to.y - from.y === 2
+        //     const botRightJump = to.x - from.x === 2 && to.y - from.y === -2
+        //     const botLeftJump = to.x - from.x === -2 && to.y - from.y === -2
+        //     if (topRightJump) {
+        //         currentBlock.topRight!.piece = undefined;
+        //     }
+        //     if (topLeftJump) {
+        //         currentBlock.topLeft!.piece = undefined;
+        //     }
+        //     if (botRightJump) {
+        //         currentBlock.botRight!.piece = undefined;
+        //     }
+        //     if (botLeftJump) {
+        //         currentBlock.botLeft!.piece = undefined;
+        //     }
+        // }
         // checks if the piece can be promoted
         this.promotePiece(piece, to.y)
         
@@ -352,4 +416,5 @@ export class Board implements BoardI {
             
     }
 }
+
 
