@@ -2,20 +2,9 @@ import { View, StyleSheet } from "react-native"
 
 export default function UnplayableBlock({boxWidth}: {boxWidth:number}) {
     return (
-        <View 
-            style={[
-                styles.box, {width: boxWidth, height: boxWidth}
-            ]}
-            >
+        <View
+            className={`bg-[#747264] items-center justify-center relative w-[12.5%] h-[12.5%]`}
+        >
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    box: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        backgroundColor: '#747264',        
-    },
-})

@@ -1,5 +1,4 @@
-import { StyleSheet, Pressable, Text, Dimensions, Alert } from "react-native";
-
+import { Pressable, Text } from "react-native";
 import { useGlobalContext } from "../GlobalContext";
 import { ActionKind } from "../gameReducer";
 import { PieceI } from "../types";
@@ -8,9 +7,6 @@ type PieceProps = PieceI & {
     x: number;
     y: number;
 }
-
-const screenWidth = Dimensions.get('screen').width
-const boxWidth = screenWidth/8
 
 export default function Piece({type, value, isKing, moves,  x, y}:PieceProps) {
     const { dispatch, playerTurn } = useGlobalContext()
@@ -24,66 +20,24 @@ export default function Piece({type, value, isKing, moves,  x, y}:PieceProps) {
         } :
         undefined
 
-    const movableStateStyle = 
-        moves.length > 0 ? 
-        styles.pieceMovable : 
-        styles.pieceImmovable
-    const pieceColorStyle =
-        type === 'z' ?
-        styles.redPiece :
-        styles.bluePiece
-    const pieceKingStyle = 
-        isKing ?
-        styles.pieceKing :
-        {}
+    const movableStateStyle = moves.length > 0 ?  "opacity-100" : "opacity-70"
+    const pieceColorStyle = type === 'z' ? "bg-red-500" : "bg-blue-700"
+    const pieceKingStyle =  isKing ? "border-2 border-[gold]" : ""
     return (
         <Pressable 
             onPressIn={() => {
                 typeof showMoves === 'function' && showMoves()
             }}
-            style={[
-                styles.piece,
-                pieceColorStyle,
-                movableStateStyle,
-                pieceKingStyle
-            ]}
+            className={`
+                w-5/6 h-5/6 rounded-full items-center justify-center
+                ${movableStateStyle} ${pieceColorStyle} ${pieceKingStyle}
+            `}
             >
-                <Text style={styles.pieceValue}>
+                <Text 
+                className="text-2xl font-semibold text-white"
+                >
                 {value}
                 </Text>
         </Pressable>
     )
 }
-
-const styles = StyleSheet.create({
-    piece: {
-        width: boxWidth * 5/6,
-        height: boxWidth * 5/6,        
-        borderRadius: 999,
-        alignItems: 'center',
-        justifyContent: 'center',        
-
-    },
-    bluePiece: {
-        backgroundColor: 'blue'
-    },
-    redPiece: {
-        backgroundColor: 'red'
-    },    
-    pieceValue: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: 'white'
-    },
-    pieceMovable: {
-        opacity: 1
-    },
-    pieceImmovable: {
-        opacity: 0.7
-    },
-    pieceKing: {
-        borderColor: 'black',
-        borderWidth: 3,
-        borderStyle: 'dotted'
-    }
-})

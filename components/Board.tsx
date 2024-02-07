@@ -25,7 +25,7 @@ export default function Board() {
     })
 
     return (
-        <View style={styles.board}>            
+        <View  className="w-full max-w-[500] aspect-square flex-wrap flex-row">  
 
             {gameBoard.map((b,i) => {                
                 const key = b ? `x:${b.coordinates.x};y:${b.coordinates.y}` : i
@@ -73,12 +73,3 @@ export default function Board() {
     )
 }
 
-const styles = StyleSheet.create({
-    board: {
-        width: screenWidth,
-        aspectRatio: '1/1',
-        flexWrap: 'wrap',
-        flexDirection: 'row',
-        maxWidth: 500,        
-    }
-})

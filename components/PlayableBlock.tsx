@@ -8,12 +8,14 @@ type PlayableBlockProps = PressableProps & {
 }
 
 export default function PlayableBlock({boxWidth, highlighted, children, onPress, ...props}: PlayableBlockProps) {
-    const boxColorStyle = highlighted  ? styles.boxHighlighted : styles.boxPlayable
 
 
     return (
         <Pressable
-        style={[styles.box, boxColorStyle, {width: boxWidth, height: boxWidth}]}
+        className={`
+        items-center justify-center relative w-[12.5%] h-[12.5%]
+        ${highlighted ? 'bg-[#99BC85]' : 'bg-white'}
+        `}
         onPress={onPress}
         {...props}
         >
@@ -21,17 +23,3 @@ export default function PlayableBlock({boxWidth, highlighted, children, onPress,
         </Pressable>
     )
 }
-
-const styles = StyleSheet.create({
-    box: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative'
-    },
-    boxPlayable: {
-        backgroundColor: '#fff'
-    },
-    boxHighlighted: {
-        backgroundColor: '#99BC85'
-    },
-})

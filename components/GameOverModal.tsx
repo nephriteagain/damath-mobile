@@ -1,13 +1,13 @@
-import { Modal, Text, StyleSheet, Pressable, View, Dimensions } from "react-native";
+import { Modal, Text, StyleSheet, Pressable, View } from "react-native";
 import { useGlobalContext } from "../GlobalContext";
 import { ActionKind } from "../gameReducer";
 
-const dimensions = Dimensions.get('screen')
 
 export default function GameOverModal() {
     const { boardData, playerTurn, dispatch, scores } = useGlobalContext()
     const { isGameOver } = boardData
 
+    
     const winnerText = scores.z === scores.x ?
         'Draw' :
         scores.z > scores.x ?
@@ -26,17 +26,29 @@ export default function GameOverModal() {
         visible={isGameOver} 
         transparent={true}
         >
-            <View style={styles.container}>
-                <View style={styles.background} />                
-                <View style={[styles.dialog, {backgroundColor: playerTurn === 'x' ? 'red' : 'blue'}]}>
-                    <Text style={[styles.text, {fontSize: 24}]}>
+            <View 
+            className="relative top-0 left-0 w-screen h-screen items-center justify-center"
+            >
+                <View 
+                className="bg-[#25292e] w-full h-full opacity-70"
+                />  
+                <View 
+                style={styles.dialog}
+                className="bg-green-800 rounded-xl items-center justify-center gap-y-8"                
+                >
+                    <Text 
+                    className="text-white text-4xl"
+                    >
                         {winnerText}
                     </Text>
                     <Pressable 
-                    style={styles.button}
+                    className="bg-green-700 px-4 py-2 rounded-xl border border-[gold]"
                     onPress={resetGame}
                     >
-                        <Text style={[styles.text, {fontSize: 20}]}>Reset Game</Text>
+                        <Text 
+                        className="text-white text-xl"
+                        >
+                            Reset Game</Text>
                     </Pressable>
                 </View>
             </View>
@@ -44,37 +56,13 @@ export default function GameOverModal() {
     )
 }
 
-const styles = StyleSheet.create({
-    background: {
-        backgroundColor: '#25292e',
-        width: '100%',
-        height: '100%',        
-        opacity: 0.7
-    },
-    container: {
-        height: dimensions.height,
-        width: dimensions.width,
-        position: 'relative',
-    },    
+const styles = StyleSheet.create({   
     dialog: {
         width: 300,
         height: 200,
         position: 'absolute',
         top: 150,
         left: '50%',
-        transform: [{translateX: -150}],
-        borderRadius: 24,
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 24                       
+        transform: [{translateX: -150}],                   
     },
-    text: {
-        color: 'white'
-    },
-    button: {
-        backgroundColor: 'green',
-        paddingHorizontal:16,
-        paddingVertical: 8,
-        borderRadius: 24,        
-    }
 })

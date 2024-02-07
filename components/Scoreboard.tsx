@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
 import { useGlobalContext } from "../GlobalContext";
 
 export default function Scoreboard() {
@@ -11,23 +11,31 @@ export default function Scoreboard() {
         </View>
     )
 }
-import { Dimensions } from "react-native";
 
-const dimensions = Dimensions.get('window')
 
 function Score({redScore, blueScore}: {redScore:number, blueScore:number}) {
     
 
     return (
     <>        
-    <View style={styles.container}>
-        <View style={[styles.score, {backgroundColor: 'blue'}]}>  
-            <Text style={{fontSize: 36, color: 'white'}}>
+    <View 
+    className="flex-row w-screen justify-between"
+    >
+        <View 
+        className="flex-row w-[50%] items-center justify-center px-4 py-3 bg-blue-700"
+        >
+            <Text 
+            className="text-4xl text-white"
+            >
             {blueScore}
             </Text>
         </View>        
-        <View style={[styles.score, {backgroundColor: 'red'}]}>
-            <Text style={styles.text}>
+        <View 
+        className="flex-row w-[50%] items-center justify-center px-4 py-3 bg-red-600"
+        >
+            <Text 
+            className="text-4xl text-white"
+            >
             {redScore}
             </Text>            
         </View>
@@ -35,23 +43,3 @@ function Score({redScore, blueScore}: {redScore:number, blueScore:number}) {
     </>
     )
 }
-
-
-const styles = StyleSheet.create({
-    container: { 
-        flexDirection: 'row', 
-        width: dimensions.width, 
-        justifyContent: 'space-between'
-    },
-    score: {
-        flexDirection: 'row', 
-        gap: 4, width: '50%', 
-        justifyContent: 'center', 
-        paddingHorizontal: 16, 
-        paddingVertical: 12
-    },
-    text: {
-        fontSize: 36, 
-        color: 'white'
-    }
-})

@@ -5,33 +5,19 @@ export default function PlayerTurn() {
     const { playerTurn } = useGlobalContext()
 
     const msg = playerTurn === 'z' ? `Red's turn` : `Blue's turn`
-    const bannerColor = playerTurn === 'z' ? styles.bannerRed : styles.bannerBlue
 
     return (
-        <View style={[styles.banner, bannerColor]}>
-            <Text style={styles.text}>{msg}</Text>
+        <View 
+        className={`
+            ${playerTurn === 'z' ? 'bg-red-600' : 'bg-blue-700'}
+            h-[60] w-screen flex-row items-center justify-center
+        `}
+        >
+            <Text 
+            className="text-3xl font-bold text-white"
+            >
+                {msg}
+            </Text>
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    banner: {
-        height: 60,
-        width: Dimensions.get('screen').width,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    bannerRed: {
-        backgroundColor: 'red'
-    },
-    bannerBlue: {
-        backgroundColor: 'blue'
-    },
-    text: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#fff'
-    }
-    
-})

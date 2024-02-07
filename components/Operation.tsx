@@ -14,28 +14,36 @@ export default function Operation({ name, hasPiece}: OperationProps) {
     
     if (name === operation.ADD) {
         return  (
-            <View style={[hasPiece ? styles.hasPiece : {}]}>
+            <View 
+            className={hasPiece ? 'absolute top-[1] left-[1]' : ''}
+            >
                 <FontAwesome name="plus" size={size} color="black" />
             </View>
         )
     }
     if (name === operation.SUBTRACT) {
         return (
-            <View style={[hasPiece ? styles.hasPiece : {}]}>
+            <View 
+            className={hasPiece ? 'absolute top-[1] left-[1]' : ''}
+            >
                 <FontAwesome name="minus" size={size} color="black" />
             </View>
             )
     }
     if (name === operation.MULTIPLY) {
         return  (
-            <View style={[hasPiece ? styles.hasPiece : {}]}>
+            <View 
+            className={hasPiece ? 'absolute top-[1] left-[1]' : ''}
+            >
                 <FontAwesome5 name="times" size={size} color="black" />
             </View>
         )
     }
     if (name === operation.DIVIDE) {
         return (
-            <View style={[hasPiece ? styles.hasPiece : {}]}>
+            <View 
+            className={hasPiece ? 'absolute top-[1] left-[1]' : ''}
+            >
                 <FontAwesome5 name="divide" size={size} color="black" />
             </View>
             )
@@ -44,12 +52,3 @@ export default function Operation({ name, hasPiece}: OperationProps) {
         <View/>
     )
 }
-
-const styles = StyleSheet.create({
-
-    hasPiece: {
-        position: 'absolute',
-        top: 1,
-        left: 1,                
-    }
-})
