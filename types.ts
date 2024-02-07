@@ -1,3 +1,4 @@
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 export enum operation  {
     ADD = 'ADD',
     MULTIPLY = 'MULTIPLY',
@@ -49,3 +50,12 @@ export interface BoardI {
     score: number;
 }   
 
+export type RootStackParamList = {
+    Home: undefined;
+    Game: undefined;
+};
+
+// Define navigation prop types for each screen
+export type RootStackNavigationProps<T extends keyof RootStackParamList> = {
+    navigation: NativeStackNavigationProp<RootStackParamList, T>;
+  };
