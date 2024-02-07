@@ -95,10 +95,10 @@ export function boardReducer(state: GameTypes, action: Action) : GameTypes {
                 currentPlayerTurn === 'z' ? 
                 {
                     x: state.scores.x,
-                    z: state.scores.z + newBoard.score
+                    z: Number((state.scores.z + newBoard.score).toFixed(2))
                 } :
                 {
-                    x: state.scores.x + newBoard.score,
+                    x: Number((state.scores.x + newBoard.score).toFixed(2)),
                     z: state.scores.z
                 }
 
