@@ -5,10 +5,14 @@ import { ActionKind } from "../gameReducer";
 const dimensions = Dimensions.get('screen')
 
 export default function GameOverModal() {
-    const { boardData, playerTurn, dispatch } = useGlobalContext()
+    const { boardData, playerTurn, dispatch, scores } = useGlobalContext()
     const { isGameOver } = boardData
 
-    const winnerText = playerTurn === 'x' ? 'Red Wins' : 'Blue Wins'
+    const winnerText = scores.z === scores.x ?
+        'Draw' :
+        scores.z > scores.x ?
+        'Red Wins!' :
+        'Blue Wins'
 
     function resetGame() {
         dispatch({

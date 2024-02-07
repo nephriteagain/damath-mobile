@@ -350,7 +350,7 @@ export class Board implements BoardI {
                     blockIndex > toIndex && blockIndex < fromIndex ||
                     blockIndex < toIndex && blockIndex > fromIndex
                 ) {                    
-                    this.computeScore(piece.value, b.piece.value, toBlock.operation)
+                    this.computeScore(piece, b.piece, toBlock.operation)
                     // remove  the captured piece
                     this.board[i].piece =  undefined;
                     return;
@@ -360,28 +360,36 @@ export class Board implements BoardI {
         this.resetScore()        
         return;
     }
-    computeScore(movedPieceValue:number, capturedPieceValue: number, destinationOperation: operation) : void {
+    computeScore(movedPiece: PieceI, capturedPiece: PieceI, destinationOperation: operation,) : void {
+        const kingMultiplier =
+            movedPiece.isKing && capturedPiece.isKing ? 
+            4 :
+            movedPiece.isKing || capturedPiece.isKing ?
+            2 :
+            1
+
+
         if (destinationOperation === operation.ADD) {            
-            const total = movedPieceValue + capturedPieceValue
-            this.score = total
+            const total = movedPiece.value + capturedPiece.value
+            this.score = total * kingMultiplier
             return
         }
         if (destinationOperation === operation.SUBTRACT) {
-            const total = movedPieceValue - capturedPieceValue
-            this.score = total
+            const total = movedPiece.value - capturedPiece.value
+            this.score = total * kingMultiplier
             return
         }
         if (destinationOperation === operation.MULTIPLY) {
-            const total = movedPieceValue * capturedPieceValue
-            this.score = total
+            const total = movedPiece.value * capturedPiece.value
+            this.score = total * kingMultiplier
             return
         }
         if (destinationOperation === operation.DIVIDE) {
-            if (capturedPieceValue === 0) {
+            if (capturedPiece.value === 0) {
                  this.score = 0
                  return
             }
-            const total = movedPieceValue / capturedPieceValue
+            const total = (movedPiece.value / capturedPiece.value) * kingMultiplier
             this.score = Number(total.toFixed(2))
             return
         }
