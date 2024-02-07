@@ -5,6 +5,7 @@ import Board from './components/Board';
 import GlobalProvider from './GlobalContext';
 import PlayerTurn from './components/PlayerTurn';
 import GameOverModal from './components/GameOverModal';
+import Scoreboard from './components/Scoreboard';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
       <View style={styles.container}>
         <PlayerTurn />
         <Board />
+        <Scoreboard />
         <StatusBar style="auto" />
       </View>
       <GameOverModal />

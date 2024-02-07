@@ -2,6 +2,7 @@ import { COUNTING } from "./lib/data";
 import { coordinates, BoardI, PieceI } from "./types";
 import { Board, } from "./game_logic/graph/testImplementation";
 import { generateCountingBoard } from "./game_logic/graph/COUNTING";
+import PlayerTurn from "./components/PlayerTurn";
 
 export const initialBoardData = COUNTING;
 
@@ -34,10 +35,18 @@ export const gameInitialState : {
     boardData: BoardI;
     pieceToMove: PieceI|null;
     playerTurn: 'x'|'z';
+    scores: {
+        x:number;
+        z:number
+    }
 } = {
     boardData: new Board(generateCountingBoard()),
     pieceToMove: null,
     playerTurn: 'z',
+    scores: {
+        x:0,
+        z:0
+    }
 }
 
 export type GameTypes = typeof gameInitialState
@@ -75,12 +84,24 @@ export function boardReducer(state: GameTypes, action: Action) : GameTypes {
         }
 
         const newBoard = state.boardData.movePiece(state.pieceToMove, from, to)
+        const currentPlayerTurn = state.playerTurn
         
         return {
             ...state,
             pieceToMove: null,
             boardData: newBoard,
             playerTurn: state.playerTurn === 'z' ? 'x' : 'z',
+            scores: 
+                currentPlayerTurn === 'z' ? 
+                {
+                    x: state.scores.x,
+                    z: state.scores.z + newBoard.score
+                } :
+                {
+                    x: state.scores.x + newBoard.score,
+                    z: state.scores.z
+                }
+
         }
         
     }
@@ -92,6 +113,7 @@ export function boardReducer(state: GameTypes, action: Action) : GameTypes {
             ...state,
             boardData: newBoard,
             pieceToMove: null,
+            scores: {x:0,z:0}
         }
     }
 

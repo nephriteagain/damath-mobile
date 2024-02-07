@@ -12,21 +12,15 @@ const GlobalContext = createContext<GlobalContextValues|null>(null)
 
 export default function GlobalProvider({children}:{children:ReactNode}) {
     const [
-        {
-            boardData,
-            pieceToMove,
-            playerTurn
-        }, 
+        globalStates, 
         dispatch
     ] = useReducer(boardReducer, gameInitialState)
 
     return (
         <GlobalContext.Provider 
         value={{
-            boardData,
-            dispatch,
-            playerTurn,
-            pieceToMove,
+            ...globalStates,
+            dispatch
         }}
         >
             {children}

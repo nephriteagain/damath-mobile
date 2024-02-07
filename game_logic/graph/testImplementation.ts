@@ -16,7 +16,7 @@ export class Block implements BlockI {
     public coordinates;
     public operation;
     public highlighted;
-    public piece
+    public piece;
 
     constructor (
         {
@@ -64,10 +64,12 @@ export class Piece implements PieceI {
 export class Board implements BoardI {
     public board;
     public isGameOver: boolean;        
+    public score: number;
 
     constructor(board: Array<BlockI>) {
         this.board = board;
         this.isGameOver = false;
+        this.score = 0;
     }
 
     /**
@@ -311,7 +313,7 @@ export class Board implements BoardI {
         }
     }
 
-    private removedCapturedPiece(to: coordinates, from: coordinates) {
+    private removedCapturedPiece(to: coordinates, from: coordinates, piece: PieceI) {
         // get the captured group
         const capturedArea = CAPTURE_GROUPS.find(group => {
             const hasTo = group.some(c => c.x === to.x && c.y === to.y)
@@ -347,14 +349,49 @@ export class Board implements BoardI {
                 if (
                     blockIndex > toIndex && blockIndex < fromIndex ||
                     blockIndex < toIndex && blockIndex > fromIndex
-                ) {
+                ) {                    
+                    this.computeScore(piece.value, b.piece.value, toBlock.operation)
                     // remove  the captured piece
                     this.board[i].piece =  undefined;
+                    return;
                 }
             }
         }
-        
+        this.resetScore()        
+        return;
     }
+    computeScore(movedPieceValue:number, capturedPieceValue: number, destinationOperation: operation) : void {
+        if (destinationOperation === operation.ADD) {            
+            const total = movedPieceValue + capturedPieceValue
+            this.score = total
+            return
+        }
+        if (destinationOperation === operation.SUBTRACT) {
+            const total = movedPieceValue - capturedPieceValue
+            this.score = total
+            return
+        }
+        if (destinationOperation === operation.MULTIPLY) {
+            const total = movedPieceValue * capturedPieceValue
+            this.score = total
+            return
+        }
+        if (destinationOperation === operation.DIVIDE) {
+            if (capturedPieceValue === 0) {
+                 this.score = 0
+                 return
+            }
+            const total = movedPieceValue / capturedPieceValue
+            this.score = Number(total.toFixed(2))
+            return
+        }
+        this.score = 0
+        return
+    }
+    resetScore() {
+        this.score = 0
+    }
+    
 
     private gameOverChecker() {
         let xPlayerHasMoves = false;
@@ -390,6 +427,7 @@ export class Board implements BoardI {
         if (!currentBlock) {
             throw new Error('cannot find "from" block')
         }
+        
         this.clearAllHighlights()
         // moves the piece accordingly
         for (let i = 0; i < this.board.length; i++) {
@@ -401,7 +439,8 @@ export class Board implements BoardI {
                 b.piece = piece
             }
         }
-        this.removedCapturedPiece(to, from)
+        // removes a capture piece and compute scores
+        this.removedCapturedPiece(to, from, piece)
         
         // promote the piece if it landed on the other side
         this.promotePiece(piece, to.y)

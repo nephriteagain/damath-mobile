@@ -46,5 +46,6 @@ export interface BoardI {
     ) : BoardI
     highLightMoves(moves: Array<coordinates>) : BoardI;    
     restartGame(board: Array<BlockI>) : BoardI;
+    score: number;
 }   
 
