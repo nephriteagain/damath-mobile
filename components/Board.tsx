@@ -79,6 +79,6 @@ const styles = StyleSheet.create({
         aspectRatio: '1/1',
         flexWrap: 'wrap',
         flexDirection: 'row',
-        maxWidth: 500
+        maxWidth: 500,        
     }
 })
