@@ -4,8 +4,7 @@ import { ActionKind } from "../gameReducer";
 
 
 export default function GameOverModal() {
-    const { boardData, playerTurn, dispatch, scores } = useGlobalContext()
-    const { isGameOver } = boardData
+    const { dispatch, scores, isGameOver } = useGlobalContext()
 
     
     const winnerText = scores.z === scores.x ?

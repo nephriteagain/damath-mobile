@@ -39,7 +39,6 @@ export interface BlockI {
 
 export interface BoardI {
     board: Array<BlockI>;
-    isGameOver: boolean;
     movePiece(
         piece: PieceI, 
         from: coordinates, 
@@ -48,6 +47,8 @@ export interface BoardI {
     highLightMoves(moves: Array<coordinates>) : BoardI;    
     restartGame(board: Array<BlockI>) : BoardI;
     score: number;
+    hasMultiJump: boolean;
+    didPieceCapture: boolean;
 }   
 
 export type RootStackParamList = {

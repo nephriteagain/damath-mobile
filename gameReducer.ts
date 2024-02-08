@@ -1,8 +1,8 @@
 import { COUNTING } from "./lib/data";
 import { coordinates, BoardI, PieceI } from "./types";
-import { Board, } from "./game_logic/graph/testImplementation";
-import { generateCountingBoard } from "./game_logic/graph/COUNTING";
-import PlayerTurn from "./components/PlayerTurn";
+import { Board, } from "./game_logic/Schema/Board";
+import { generateCountingBoard } from "./game_logic/Schema/COUNTING";
+import { gameOverChecker } from "./lib/utils";
 
 export const initialBoardData = COUNTING;
 
@@ -32,6 +32,7 @@ type RestartGame = {
 export type Action = MoveAction|HighlightAction|RestartGame
 
 export const gameInitialState : {
+    isGameOver: boolean;
     boardData: BoardI;
     pieceToMove: PieceI|null;
     playerTurn: 'x'|'z';
@@ -41,6 +42,7 @@ export const gameInitialState : {
     }
 } = {
     boardData: new Board(generateCountingBoard()),
+    isGameOver : false,
     pieceToMove: null,
     playerTurn: 'z',
     scores: {
@@ -100,8 +102,8 @@ export function boardReducer(state: GameTypes, action: Action) : GameTypes {
                 {
                     x: Number((state.scores.x + newBoard.score).toFixed(2)),
                     z: state.scores.z
-                }
-
+                },
+            isGameOver: gameOverChecker(newBoard.board, state.playerTurn === 'z' ? 'x' : 'z')
         }
         
     }
@@ -113,7 +115,8 @@ export function boardReducer(state: GameTypes, action: Action) : GameTypes {
             ...state,
             boardData: newBoard,
             pieceToMove: null,
-            scores: {x:0,z:0}
+            scores: {x:0,z:0},
+            isGameOver: false
         }
     }
 
