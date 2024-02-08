@@ -1,74 +1,6 @@
-import { boxPiece, piece } from "./data";
-
-/**
- * 
- * @param boardData 
- * @param c coordinates
- * @returns the status of whether the block is an available move and what is the index
- * @description checks if the selected block is an available move  to a certain piece
- */
-export function blockMovable(
-    boardData: Array<boxPiece>, 
-    c: {x:number;y:number}
-) : {status:boolean;index:number} {
-    const block = boardData.find(b => b.x === c.x && b.y === c.y)
-    return {
-        status: Boolean(block && block.playable && !block.piece),
-        index: block ? boardData.indexOf(block) : -1
-    }
-}
-
-/**
- * 
- * @param boardData 
- * @param c coordinates
- * @param pieceType
- * @returns the status of whether the block is an available jump and what is the index
- * @description checks if the selected block is an available jump  to a certain piece
- */
-export function blockJumpable(
-    boardData:Array<boxPiece>, 
-    pieceType: 'x'|'z',
-    jumpC: {x:number;y:number},
-    captureC: {x:number;y:number},
-) : {status:boolean;index:number} {
-    const jumpBlock = boardData.find(b => b.x === jumpC.x && b.y === jumpC.y)
-    const captureBlock = boardData.find(b => b.x === captureC.x && b.y === captureC.y)
+import { BlockI } from "../types";
 
 
-    const isPlayableHasOppositePiece = Boolean(
-        captureBlock &&
-        captureBlock.playable && 
-        captureBlock.piece?.type === pieceType
-    )
-
-    if (!isPlayableHasOppositePiece) {
-        return {
-            status: false,
-            index: -1
-        }
-    }
-
-    const isPlayableEmpty = Boolean(
-        jumpBlock &&
-        jumpBlock.playable &&
-        !jumpBlock.piece
-    )
-
-    if (!isPlayableEmpty) {
-        return {
-            status: false,
-            index: -1
-        }
-    }
-
-    return {
-        status: true,
-        index: jumpBlock ? boardData.indexOf(jumpBlock) : -1
-    }
-    
-
-}
 
 export function makeC(x:number,y:number) : {x:number,y:number} {
     return {x,y}
@@ -89,4 +21,33 @@ export function generateBoardCoordinate() :  Array<{x:number;y:number}> {
     }
 
     return coordinateArr
+}
+
+/**
+ * 
+ * @param board the game board
+ * @param nextPlayer the next player to move
+ * @returns {boolean}
+ * @description checks if the next player has a move to play
+ */
+export function gameOverChecker(board: Array<BlockI>, nextPlayer: 'x'|'z') : boolean {    
+    let nextPlayerHasMoves = false;
+    for (let i = 0; i < board.length; i++) {
+        const b = board[i];
+        if (
+            b.piece && 
+            b.piece.type === nextPlayer && 
+            b.piece.moves.length > 0
+        ) {
+            nextPlayerHasMoves = true;
+            break;
+        }
+    }
+
+    
+    if (nextPlayerHasMoves === false) {
+        return true
+    }
+
+    return false
 }

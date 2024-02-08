@@ -1,4 +1,5 @@
-import { Piece, Block } from './testImplementation'
+import { Block } from './Block';
+import { Piece } from './Piece';
 import { makeC } from '../../lib/utils'
 import { operation, BlockI } from '../../types'
 
